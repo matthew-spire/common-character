@@ -31,7 +31,7 @@
     - Data API: http://api.duckduckgo.com/?q=the+wire+characters&format=json
     - Package/Bundle name: com.sample.wireviewer
 
-# Build and Run
+## Build and Run
 - Download or clone the repository from GitHub
 - Open the project in Android Studio
 - Build and run the project on a device of choice
