@@ -6,12 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.matthewspire.commonCharacter.R
 import com.matthewspire.commonCharacter.databinding.FragmentCharacterListBinding
+import com.matthewspire.commoncharacter.data.model.Character
 import com.matthewspire.commoncharacter.ServiceLocator
+import com.matthewspire.commoncharacter.ui.detail.CharacterDetailFragment
 
-class CharacterListFragment : Fragment() {
+class CharacterListFragment : Fragment(), OnCharacterClickListener {
     private lateinit var binding: FragmentCharacterListBinding
     private lateinit var viewModel: CharacterListViewModel
     private lateinit var adapter: CharacterListAdapter
@@ -34,13 +38,24 @@ class CharacterListFragment : Fragment() {
         observeViewModel()
     }
 
+    override fun onCharacterClick(character: Character) {
+        val detailFragment = parentFragmentManager.findFragmentById(R.id.characterDetailFragment) as? CharacterDetailFragment
+
+        if (detailFragment != null) {
+            detailFragment.updateCharacter(character)
+        } else {
+            val action = CharacterListFragmentDirections.actionCharacterListFragmentToCharacterDetailFragment(character)
+            findNavController().navigate(action)
+        }
+    }
+
     private fun setupViewModel() {
         val factory = CharacterListViewModelFactory(ServiceLocator.characterRepository)
         viewModel = androidx.lifecycle.ViewModelProvider(this, factory)[CharacterListViewModel::class.java]
     }
 
     private fun setupRecyclerView() {
-        adapter = CharacterListAdapter()
+        adapter = CharacterListAdapter(this)
 
         binding.characterList.layoutManager = LinearLayoutManager(requireContext())
         binding.characterList.adapter = adapter

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.matthewspire.commonCharacter.R
 import com.matthewspire.commonCharacter.databinding.FragmentCharacterDetailBinding
@@ -12,6 +13,7 @@ import com.matthewspire.commoncharacter.data.model.Character
 
 class CharacterDetailFragment : Fragment() {
     private lateinit var binding: FragmentCharacterDetailBinding
+    private val viewModel: CharacterDetailViewModel by viewModels()
     private var safeArgs: CharacterDetailFragmentArgs? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,43 +35,50 @@ class CharacterDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val character = safeArgs?.character
+        viewModel.setCharacter(safeArgs?.character)
 
-        if (character == null) {
-            binding.selectCharacterMessage.text = getString(R.string.select_character)
-        } else {
-            updateCharacter(character)
+        viewModel.character.observe(viewLifecycleOwner) { character ->
+            if (character == null) {
+                showSelectCharacterMessage()
+            } else {
+                updateCharacter(character)
+            }
         }
     }
 
+    private fun showSelectCharacterMessage() {
+        binding.selectCharacterMessage.text = getString(R.string.select_character)
+        binding.selectCharacterMessage.visibility = View.VISIBLE
+    }
+
     fun updateCharacter(character: Character?) {
+        setupCharacterDetails(character)
+        loadCharacterImage(character)
+        controlSelectCharacterMessageVisibility(character)
+    }
+
+    private fun setupCharacterDetails(character: Character?) {
         // Display character details
         binding.apply {
             characterTitle.text = character?.name
             characterDescription.text = character?.description
         }
+    }
 
+    private fun loadCharacterImage(character: Character?) {
         // Load character image
-        if ((character?.icon?.url != null) && character.icon.url.isNotEmpty()) {
-            val iconUrl = "https://duckduckgo.com${character.icon.url}"
-            Glide.with(requireContext())
-                .load(iconUrl)
-                .fitCenter()
-                .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_placeholder)
-                .into(binding.characterImage)
-        } else {
-            Glide.with(requireContext())
-                .load(R.drawable.ic_placeholder)
-                .fitCenter()
-                .into(binding.characterImage)
-        }
+        val imageUrl = character?.icon?.url?.let { "https://duckduckgo.com$it" } ?: ""
+        val imageResource = imageUrl.ifEmpty { R.drawable.ic_placeholder }
 
-        // Show or hide "Select a Character" message
-        if (character != null) {
-            binding.selectCharacterMessage.visibility = View.GONE
-        } else {
-            binding.selectCharacterMessage.visibility = View.VISIBLE
-        }
+        Glide.with(requireContext())
+            .load(imageResource)
+            .fitCenter()
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
+            .into(binding.characterImage)
+    }
+
+    private fun controlSelectCharacterMessageVisibility(character: Character?) {
+        binding.selectCharacterMessage.visibility = if (character != null) View.GONE else View.VISIBLE
     }
 }

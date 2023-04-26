@@ -12,7 +12,7 @@ import com.matthewspire.commonCharacter.databinding.ItemCharacterBinding
 import com.matthewspire.commoncharacter.data.model.Character
 import com.matthewspire.commoncharacter.ui.detail.CharacterDetailFragment
 
-class CharacterListAdapter :
+class CharacterListAdapter(private val onCharacterClickListener: OnCharacterClickListener) :
     ListAdapter<Character, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -32,15 +32,7 @@ class CharacterListAdapter :
             binding.apply {
                 characterName.text = character.name
                 root.setOnClickListener {
-                    val fragment = it.findFragment<CharacterListFragment>()
-                    val detailFragment = fragment.parentFragmentManager.findFragmentById(R.id.characterDetailFragment) as? CharacterDetailFragment
-
-                    if (detailFragment != null) {
-                        detailFragment.updateCharacter(character)
-                    } else {
-                        val action = CharacterListFragmentDirections.actionCharacterListFragmentToCharacterDetailFragment(character)
-                        it.findNavController().navigate(action)
-                    }
+                    onCharacterClickListener.onCharacterClick(character)
                 }
             }
         }
