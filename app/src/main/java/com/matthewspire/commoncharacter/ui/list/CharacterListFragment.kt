@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.matthewspire.commonCharacter.databinding.FragmentCharacterListBinding
 import com.matthewspire.commoncharacter.ServiceLocator
 
@@ -29,6 +30,7 @@ class CharacterListFragment : Fragment() {
 
         setupViewModel()
         setupRecyclerView()
+        setupSearch()
         observeViewModel()
     }
 
@@ -44,14 +46,26 @@ class CharacterListFragment : Fragment() {
         binding.characterList.adapter = adapter
     }
 
+    private fun setupSearch() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.filterCharacters(newText)
+                return true
+            }
+        })
+    }
+
     private fun observeViewModel() {
-        viewModel.characterList.observe(viewLifecycleOwner) { characters ->
+        viewModel.characters.observe(viewLifecycleOwner) { characters ->
             adapter.submitList(characters)
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            // handle error message
-            TODO()
+            Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
         }
     }
 }

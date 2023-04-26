@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.matthewspire.commonCharacter.databinding.ItemCharacterBinding
 import com.matthewspire.commoncharacter.data.model.Character
 
-class CharacterListAdapter() :
+class CharacterListAdapter :
     ListAdapter<Character, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,

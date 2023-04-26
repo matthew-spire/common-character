@@ -8,7 +8,9 @@ import com.matthewspire.commoncharacter.data.repository.CharacterRepository
 import kotlinx.coroutines.launch
 
 class CharacterListViewModel(private val characterRepository: CharacterRepository) : ViewModel() {
-    val characterList = MutableLiveData<List<Character>>()
+    private val _allCharacters = MutableLiveData<List<Character>>()
+    private val _characters = MutableLiveData<List<Character>?>()
+    val characters: MutableLiveData<List<Character>?> = _characters
 
     val errorMessage = MutableLiveData<String>()
 
@@ -20,10 +22,23 @@ class CharacterListViewModel(private val characterRepository: CharacterRepositor
         viewModelScope.launch {
             try {
                 val characters = characterRepository.fetchCharacters()
-                characterList.postValue(characters)
+                _allCharacters.postValue(characters)
+                _characters.postValue(characters)
             } catch (exception: Exception) {
                 errorMessage.postValue("Failed to fetch characters.")
             }
         }
+    }
+
+    fun filterCharacters(query: String?) {
+        val filteredList = if (query.isNullOrEmpty()) {
+            _allCharacters.value
+        } else {
+            _allCharacters.value?.filter { character ->
+                character.name.contains(query, ignoreCase = true) ||
+                character.description.contains(query, ignoreCase = true)
+            }
+        }
+        _characters.value = filteredList
     }
 }
