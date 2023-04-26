@@ -1,0 +1,103 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+}
+
+android {
+    namespace 'com.matthewspire.commonCharacter'
+    compileSdk 33
+
+    buildFeatures {
+        dataBinding true
+    }
+
+    defaultConfig {
+        applicationId "com.matthewspire.commonCharacter"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        simpsons {
+            dimension "version"
+            buildConfigField "String", "CHARACTER_QUERY", "\"simpsons characters\""
+        }
+        theWire {
+            dimension "version"
+            buildConfigField "String", "CHARACTER_QUERY", "\"the wire characters\""
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    // ConstraintLayout Dependency
+    implementation "androidx.constraintlayout:constraintlayout:$version_constraint_layout"
+
+    // Core KTX Dependency
+    implementation "androidx.core:core-ktx:$version_core"
+
+    // Glide Dependency
+    implementation "com.github.bumptech.glide:glide:$version_glide"
+
+    // Kotlin Standard Library Dependency
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$version_kotlin"
+
+    // ViewModel and LiveData Dependencies
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
+
+    // Moshi Dependencies
+    implementation "com.squareup.moshi:moshi:$version_moshi"
+    implementation "com.squareup.moshi:moshi-kotlin:$version_moshi"
+
+    // Multidex Dependency
+    implementation "androidx.multidex:multidex:$version_multidex"
+
+    // Kotlin Navigation Dependencies
+    implementation "androidx.navigation:navigation-fragment-ktx:$version_navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$version_navigation"
+
+    // OkHttp
+    implementation "com.squareup.okhttp3:okhttp:$version_okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$version_okhttp"
+
+    // RecyclerView
+    implementation "androidx.recyclerview:recyclerview:$version_recyclerview"
+
+    // Retrofit with Moshi Converter Dependency
+    implementation "com.squareup.retrofit2:converter-moshi:$version_retrofit"
+
+    // Testing Dependencies
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Testing Navigation Dependency
+    androidTestImplementation "androidx.navigation:navigation-testing:$version_navigation"
+}
