@@ -5,14 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.matthewspire.commonCharacter.R
 import com.matthewspire.commonCharacter.databinding.FragmentCharacterDetailBinding
+import com.matthewspire.commoncharacter.data.model.Character
 
 class CharacterDetailFragment : Fragment() {
     private lateinit var binding: FragmentCharacterDetailBinding
-    private val args: CharacterDetailFragmentArgs by navArgs()
+    private var safeArgs: CharacterDetailFragmentArgs? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val nullableArgs = arguments
+        if (nullableArgs != null) {
+            safeArgs = CharacterDetailFragmentArgs.fromBundle(nullableArgs)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,8 +33,16 @@ class CharacterDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val character = args.character
+        val character = safeArgs?.character
 
+        if (character == null) {
+            binding.selectCharacterMessage.text = getString(R.string.select_character)
+        } else {
+            updateCharacter(character)
+        }
+    }
+
+    fun updateCharacter(character: Character?) {
         // Display character details
         binding.apply {
             characterTitle.text = character?.name
@@ -47,6 +63,13 @@ class CharacterDetailFragment : Fragment() {
                 .load(R.drawable.ic_placeholder)
                 .fitCenter()
                 .into(binding.characterImage)
+        }
+
+        // Show or hide "Select a Character" message
+        if (character != null) {
+            binding.selectCharacterMessage.visibility = View.GONE
+        } else {
+            binding.selectCharacterMessage.visibility = View.VISIBLE
         }
     }
 }

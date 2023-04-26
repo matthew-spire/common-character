@@ -2,12 +2,15 @@ package com.matthewspire.commoncharacter.ui.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.findFragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.matthewspire.commonCharacter.R
 import com.matthewspire.commonCharacter.databinding.ItemCharacterBinding
 import com.matthewspire.commoncharacter.data.model.Character
+import com.matthewspire.commoncharacter.ui.detail.CharacterDetailFragment
 
 class CharacterListAdapter :
     ListAdapter<Character, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
@@ -29,8 +32,15 @@ class CharacterListAdapter :
             binding.apply {
                 characterName.text = character.name
                 root.setOnClickListener {
-                    val action = CharacterListFragmentDirections.actionCharacterListFragmentToCharacterDetailFragment(character)
-                    it.findNavController().navigate(action)
+                    val fragment = it.findFragment<CharacterListFragment>()
+                    val detailFragment = fragment.parentFragmentManager.findFragmentById(R.id.characterDetailFragment) as? CharacterDetailFragment
+
+                    if (detailFragment != null) {
+                        detailFragment.updateCharacter(character)
+                    } else {
+                        val action = CharacterListFragmentDirections.actionCharacterListFragmentToCharacterDetailFragment(character)
+                        it.findNavController().navigate(action)
+                    }
                 }
             }
         }
