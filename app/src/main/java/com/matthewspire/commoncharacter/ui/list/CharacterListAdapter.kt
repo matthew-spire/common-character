@@ -2,6 +2,7 @@ package com.matthewspire.commoncharacter.ui.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +29,8 @@ class CharacterListAdapter(private val onCharacterClicked: (Character) -> Unit) 
             binding.apply {
                 characterName.text = character.name
                 root.setOnClickListener {
-                    onCharacterClicked(character)
+                    val action = CharacterListFragmentDirections.actionCharacterListFragmentToCharacterDetailFragment(character)
+                    it.findNavController().navigate(action)
                 }
             }
         }
