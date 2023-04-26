@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CommonCharacter</string>
     <string name="image_of_character">Image of Character</string>
+    <string name="select_character">Select a character from the list to see details.</string>
 </resources>
