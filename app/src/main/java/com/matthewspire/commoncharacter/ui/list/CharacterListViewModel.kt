@@ -7,17 +7,21 @@ import com.matthewspire.commoncharacter.data.model.Character
 import com.matthewspire.commoncharacter.data.repository.CharacterRepository
 import kotlinx.coroutines.launch
 
+// This class is the ViewModel for the CharacterListFragment.
 class CharacterListViewModel(private val characterRepository: CharacterRepository) : ViewModel() {
+
     private val _allCharacters = MutableLiveData<List<Character>>()
     private val _characters = MutableLiveData<List<Character>?>()
     val characters: MutableLiveData<List<Character>?> = _characters
 
     val errorMessage = MutableLiveData<String>()
 
+    // Fetches the characters from the repository when the ViewModel is created.
     init {
         fetchCharacters()
     }
 
+    // Fetches the characters from the repository.
     private fun fetchCharacters() {
         viewModelScope.launch {
             try {
@@ -30,13 +34,14 @@ class CharacterListViewModel(private val characterRepository: CharacterRepositor
         }
     }
 
+    // Filters the characters based on the given query.
     fun filterCharacters(query: String?) {
         val filteredList = if (query.isNullOrEmpty()) {
             _allCharacters.value
         } else {
             _allCharacters.value?.filter { character ->
                 character.name.contains(query, ignoreCase = true) ||
-                character.description.contains(query, ignoreCase = true)
+                        character.description.contains(query, ignoreCase = true)
             }
         }
         _characters.value = filteredList

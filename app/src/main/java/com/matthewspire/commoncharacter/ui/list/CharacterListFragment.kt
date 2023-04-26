@@ -15,11 +15,14 @@ import com.matthewspire.commoncharacter.data.model.Character
 import com.matthewspire.commoncharacter.ServiceLocator
 import com.matthewspire.commoncharacter.ui.detail.CharacterDetailFragment
 
+// This class is a fragment that displays the list of characters.
 class CharacterListFragment : Fragment(), OnCharacterClickListener {
+
     private lateinit var binding: FragmentCharacterListBinding
     private lateinit var viewModel: CharacterListViewModel
     private lateinit var adapter: CharacterListAdapter
 
+    // Creates the view for the fragment.
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,6 +32,7 @@ class CharacterListFragment : Fragment(), OnCharacterClickListener {
         return binding.root
     }
 
+    // Sets up the ViewModel, RecyclerView, and search functionality for the fragment.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -38,6 +42,7 @@ class CharacterListFragment : Fragment(), OnCharacterClickListener {
         observeViewModel()
     }
 
+    // Handles clicks on characters in the list.
     override fun onCharacterClick(character: Character) {
         val detailFragment = parentFragmentManager.findFragmentById(R.id.characterDetailFragment) as? CharacterDetailFragment
 
@@ -49,11 +54,13 @@ class CharacterListFragment : Fragment(), OnCharacterClickListener {
         }
     }
 
+    // Sets up the ViewModel for the fragment.
     private fun setupViewModel() {
         val factory = CharacterListViewModelFactory(ServiceLocator.characterRepository)
         viewModel = androidx.lifecycle.ViewModelProvider(this, factory)[CharacterListViewModel::class.java]
     }
 
+    // Sets up the RecyclerView for the fragment.
     private fun setupRecyclerView() {
         adapter = CharacterListAdapter(this)
 
@@ -61,6 +68,7 @@ class CharacterListFragment : Fragment(), OnCharacterClickListener {
         binding.characterList.adapter = adapter
     }
 
+    // Sets up the search functionality for the fragment.
     private fun setupSearch() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -74,6 +82,7 @@ class CharacterListFragment : Fragment(), OnCharacterClickListener {
         })
     }
 
+    // Observes changes in the ViewModel and updates the UI accordingly.
     private fun observeViewModel() {
         viewModel.characters.observe(viewLifecycleOwner) { characters ->
             adapter.submitList(characters)
