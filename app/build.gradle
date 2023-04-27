@@ -36,10 +36,12 @@ android {
     flavorDimensions "version"
     productFlavors {
         simpsons {
+            applicationId "com.sample.simpsonsviewer"
             dimension "version"
             buildConfigField "String", "CHARACTER_QUERY", "\"simpsons characters\""
         }
         theWire {
+            applicationId "com.sample.wireviewer"
             dimension "version"
             buildConfigField "String", "CHARACTER_QUERY", "\"the wire characters\""
         }
